@@ -1,0 +1,5 @@
+SELECT Year,
+MAKEDATE(Year,1) as first_day_of_the_year,
+CURDATE() as today_date,
+TIMESTAMPDIFF(YEAR, MAKEDATE(Year,1), CURDATE()) as years_between
+FROM infectious_cases

@@ -1,0 +1,12 @@
+SELECT en.entity, en.code, 
+AVG(inf.Number_rabies) as avarage_cases,
+MIN(inf.Number_rabies) as min_cases,
+MAX(inf.Number_rabies) as max_cases,
+SUM(inf.Number_rabies) as total_cases
+FROM entities as en
+LEFT JOIN infectious_cases as inf 
+ON en.id = inf.entity_id
+WHERE inf.Number_rabies > 0
+GROUP BY en.id
+ORDER BY avarage_cases DESC
+LIMIT 10;

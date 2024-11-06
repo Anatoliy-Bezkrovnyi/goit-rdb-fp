@@ -1,0 +1,43 @@
+-- New schema created and set as default 
+CREATE SCHEMA pandemic;
+USE pandemic;
+
+-- New table created to store entities and code data 
+CREATE TABLE entities (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  entity VARCHAR(50),
+  code VARCHAR(10)
+);
+
+-- Unique records are copied from infectious_cases to entities 
+INSERT INTO entities (entity, code)
+SELECT DISTINCT Entity, Code FROM infectious_cases;
+
+-- New column is added to store entity ids 
+ALTER TABLE infectious_cases
+ADD COLUMN entity_id INT;
+
+-- New column is added to infectious_cases as a primary key
+ALTER TABLE infectious_cases
+ADD COLUMN id INT AUTO_INCREMENT PRIMARY KEY;
+
+-- Entity and Code columns are deleted from infectious_cases as this info is stored in separate table
+ALTER TABLE infectious_cases
+DROP COLUMN Entity, 
+DROP COLUMN Code;
+
+
+INSERT INTO infectious_cases (entity_id)
+SELECT id FROM entities WHERE entities.entity = Entity;
+
+-- Updating values at infectious_cases table set entity ids to the records
+SET SQL_SAFE_UPDATES = 0;
+
+UPDATE infectious_cases SET
+entity_id = (SELECT id FROM entities WHERE infectious_cases.Entity = entity)
+;
+
+-- Set up PK and FK between two tables
+ALTER TABLE infectious_cases
+ADD CONSTRAINT FK_Infectious_cases_Entities
+FOREIGN KEY (entity_id) REFERENCES entities(id);

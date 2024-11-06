@@ -1,0 +1,18 @@
+DELIMITER //
+
+DROP FUNCTION IF EXISTS pandemic.CalculateDifferenceInYears;
+CREATE FUNCTION CalculateDifferenceInYears(input_year INT)
+RETURNS INT
+DETERMINISTIC 
+NO SQL
+BEGIN
+    DECLARE result INT;
+    SET result = TIMESTAMPDIFF(YEAR, MAKEDATE(input_year,1), CURDATE());
+    RETURN result;
+END //
+
+DELIMITER ;
+
+SELECT Year,
+CalculateDifferenceInYears(Year) as Difference
+FROM infectious_cases;
